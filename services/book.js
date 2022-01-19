@@ -1,5 +1,3 @@
-const router = require('express').Router();
-const axios = require('axios');
 const { searchBookById } = require('./book.api');
 
 // Import model
