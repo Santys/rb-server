@@ -20,5 +20,6 @@ router.post('/auth/login', authController.login);
 router.get('/auth/verify', isAuthenticated, authController.verify);
 //Review
 router.post('/review/create', reviewController.createReview);
+router.delete('/review/delete', reviewController.deleteReview);
 
 module.exports = router;

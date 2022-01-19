@@ -14,7 +14,7 @@ const createReview = async (owner, content, rate, idUser, idBook) => {
 };
 
 const getReview = async (id) => {
-  const results = await Review.findById(id).populate('users');
+  const results = await Review.findById(id).populate('idUser');
 
   if (!results) {
     return { status: 404, data: { errorMessage: 'Review not found' } };
