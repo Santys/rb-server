@@ -1,5 +1,7 @@
 const bookController = require('../controllers/book');
+const authController = require('../controllers/auth');
 
+const { isAuthenticated } = require('../middleware/jwt.middleware');
 const router = require('express').Router();
 
 /* GET home page */
@@ -11,5 +13,9 @@ router.get('/', (req, res, next) => {
 router.get('/book/search-books', bookController.searchBooks);
 router.get('/book/search-book-by-id/:id', bookController.searchBookById);
 router.get('/book/get-top-books', bookController.getTopBooks);
+//Auth
+router.post('/auth/signup', authController.signup);
+router.post('/auth/login', authController.login);
+router.get('/auth/verify', isAuthenticated, authController.verify);
 
 module.exports = router;

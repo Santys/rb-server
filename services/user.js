@@ -14,7 +14,17 @@ const getUser = async (id) => {
   const results = await User.findById(id).populate('books').populate('reviews');
 
   if (!results) {
-    return { status: 404, data: { errorMessage: 'User not found' } };
+    return { status: 404, errorMessage: 'User not found' };
+  }
+
+  return { status: 200, data: results };
+};
+
+const getUserByName = async (username) => {
+  const results = await User.findOne({ username });
+
+  if (!results) {
+    return { status: 404, errorMessage: 'User not found' };
   }
 
   return { status: 200, data: results };
@@ -30,4 +40,4 @@ const deleteUser = async (id) => {
   return { status: 200, data: deletedUser };
 };
 
-module.exports = { createUser, getUser, updateUser, deleteUser };
+module.exports = { createUser, getUser, getUserByName, updateUser, deleteUser };
