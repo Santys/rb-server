@@ -40,4 +40,14 @@ const searchBookById = async (req, res) => {
   }
 };
 
-module.exports = { searchBooks, searchBookById };
+const getTopBooks = async (req, res) => {
+  try {
+    const result = await bookServices.getTopBooks();
+    return res.status(result.status).json(result.data);
+  } catch (err) {
+    console.log(err);
+    return res.status(err.response.status).json({ errorMessage: 'Bad request: ' + err });
+  }
+};
+
+module.exports = { searchBooks, searchBookById, getTopBooks };

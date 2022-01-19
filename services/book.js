@@ -42,6 +42,11 @@ const getBookByIdApi = async (idApi) => {
   return { status: 200, data: results };
 };
 
+const getTopBooks = async () => {
+  const results = await Book.find().sort({ rating: -1 }).limit(10);
+  return { status: 200, data: results };
+};
+
 const updateBook = async (id, book) => {
   const updatedBook = await Book.findByIdAndUpdate(id, book);
   return { status: 200, data: updatedBook };
@@ -52,4 +57,4 @@ const deleteBook = async (id) => {
   return { status: 200, data: deletedBook };
 };
 
-module.exports = { createBook, getBook, getBookByIdApi, updateBook, deleteBook };
+module.exports = { createBook, getBook, getBookByIdApi, getTopBooks, updateBook, deleteBook };

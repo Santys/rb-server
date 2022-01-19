@@ -10,5 +10,6 @@ router.get('/', (req, res, next) => {
 //Books
 router.get('/book/search-books', bookController.searchBooks);
 router.get('/book/search-book-by-id/:id', bookController.searchBookById);
+router.get('/book/get-top-books', bookController.getTopBooks);
 
 module.exports = router;
