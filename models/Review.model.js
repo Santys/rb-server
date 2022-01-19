@@ -1,4 +1,4 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model } = require('mongoose');
 
 const reviewSchema = new Schema({
   owner: {
@@ -9,14 +9,14 @@ const reviewSchema = new Schema({
     type: String,
     required: true,
   },
-  rating: {
+  rate: {
     type: Number,
     required: true,
   },
-  idBook: { type: Schema.Types.ObjectId, ref: "Book" },
-  idUser: { type: Schema.Types.ObjectId, ref: "User" },
+  idBook: { type: Schema.Types.ObjectId, ref: 'Book' },
+  idUser: { type: Schema.Types.ObjectId, ref: 'User' },
 });
 
-const Review = model("Review", reviewSchema);
+const Review = model('Review', reviewSchema);
 
 module.exports = Review;

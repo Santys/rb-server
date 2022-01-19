@@ -15,7 +15,7 @@ const signup = async (req, res) => {
     }
     // Create user
     //Encrypt password
-    console.log(password);
+
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const createdUser = await userServices.createUser(username, hashedPassword);
     return res.status(createdUser.status).json(createdUser.data);

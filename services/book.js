@@ -3,30 +3,33 @@ const { searchBookById } = require('./book.api');
 // Import model
 const Book = require('../models/Book.model');
 
-const createBook = async (idApi) => {
+const getBookByIdApiOrCreateBook = async (idApi) => {
   //Check if book exist, if not, create it
-  let results = await Book.findOne({ idApi });
+  let results = await getBookByIdApi(idApi);
 
-  if (!results) {
-    const bookInfo = await searchBookById(idApi);
+  if (Object.keys(results.data).length === 0) {
+    const bookInfoQuery = await searchBookById(idApi);
+    if (bookInfoQuery.status !== 200) {
+      return { status: bookInfoQuery.status, errorMessage: 'Book not found' };
+    }
+    const bookInfo = bookInfoQuery.data;
     results = await Book.create({
       title: bookInfo.title,
       author: bookInfo.authors,
       cover: bookInfo.cover,
       idApi: bookInfo.idApi,
     });
+    return { status: 200, data: results };
   } else {
-    return { status: 400, data: { errorMessage: 'Book already created' } };
+    return { status: 200, data: results.data };
   }
-
-  return { status: 200, data: results };
 };
 
 const getBook = async (id) => {
   const results = await Book.findById(id).populate('reviews').populate('users');
 
   if (!results) {
-    return { status: 404, data: { errorMessage: 'Book not found' } };
+    return { status: 404, errorMessage: 'Book not found' };
   }
 
   return { status: 200, data: results };
@@ -57,4 +60,4 @@ const deleteBook = async (id) => {
   return { status: 200, data: deletedBook };
 };
 
-module.exports = { createBook, getBook, getBookByIdApi, getTopBooks, updateBook, deleteBook };
+module.exports = { getBookByIdApiOrCreateBook, getBook, getBookByIdApi, getTopBooks, updateBook, deleteBook };

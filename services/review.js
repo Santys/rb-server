@@ -1,10 +1,13 @@
 // Import model
 const Review = require('../models/Review.model');
 
-const createReview = async (content, rate) => {
+const createReview = async (owner, content, rate, idUser, idBook) => {
   const result = await Review.create({
+    owner,
     content,
     rate,
+    idUser,
+    idBook,
   });
 
   return { status: 200, data: result };
