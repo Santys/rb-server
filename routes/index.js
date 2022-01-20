@@ -1,6 +1,7 @@
 const bookController = require('../controllers/book');
 const authController = require('../controllers/auth');
 const reviewController = require('../controllers/review');
+const userController = require('../controllers/user');
 
 const { isAuthenticated } = require('../middleware/jwt.middleware');
 const router = require('express').Router();
@@ -22,5 +23,7 @@ router.get('/auth/verify', isAuthenticated, authController.verify);
 router.post('/review/create', reviewController.createReview);
 router.delete('/review/delete', reviewController.deleteReview);
 router.put('/review/modify', reviewController.modifyReview);
+//User
+router.get('/user/:id', userController.getUser);
 
 module.exports = router;
