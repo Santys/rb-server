@@ -24,7 +24,7 @@ const getReview = async (id) => {
 };
 
 const updateReview = async (id, review) => {
-  const updatedReview = await Review.findByIdAndUpdate(id, review);
+  const updatedReview = await Review.findByIdAndUpdate(id, review, { new: true });
   return { status: 200, data: updatedReview };
 };
 

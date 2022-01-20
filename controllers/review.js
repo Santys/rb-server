@@ -1,6 +1,4 @@
 const reviewServices = require('../services/review');
-const bookServices = require('../services/book');
-const userServices = require('../services/user');
 const updateDBServices = require('../services/updateDB');
 
 const createReview = async (req, res) => {
@@ -16,18 +14,8 @@ const createReview = async (req, res) => {
   }
   const { owner, content, rate, idUser, idApi } = req.body.data;
   try {
-    const targetedBookQuery = await bookServices.getBookByIdApiOrCreateBook(idApi);
-    if (targetedBookQuery.status !== 200) {
-      return res.status(targetedBookQuery.status).json({ errorMessage: 'Bad request' });
-    }
-    const targetedBook = targetedBookQuery.data;
-    const newReviewQuery = await reviewServices.createReview(owner, content, rate, idUser, targetedBook._id);
-    if (newReviewQuery.status !== 200) {
-      return res.status(newReviewQuery.status).json({ errorMessage: 'Bad request' });
-    }
-    const newReview = newReviewQuery.data;
-    const results = await updateDBServices.userCreateNewReview(newReview, idUser, targetedBook._id);
-    return res.status(results.status).json(results.data);
+    const result = await updateDBServices.userCreateNewReview(owner, content, rate, idUser, idApi);
+    return res.status(result.status).json(result.data);
   } catch (err) {
     console.log(err);
     return res.status(err.response.status).json({ errorMessage: 'Bad request: ' + err });
@@ -53,14 +41,7 @@ const deleteReview = async (req, res) => {
     if (review.idUser._id != idUser) {
       return res.status(403).json({ errorMessage: 'Not authorized' });
     }
-
-    const deletedReviewQuery = await reviewServices.deleteReview(idReview);
-    if (deletedReviewQuery.status !== 200) {
-      return res.status(deletedReviewQuery.status).json({ errorMessage: 'Bad request' });
-    }
-    const deletedReview = deletedReviewQuery.data;
-
-    const results = await updateDBServices.userDeleteReview(deletedReview, idUser);
+    const results = await updateDBServices.userDeleteReview(review, idUser);
     return res.status(results.status).json(results.data);
   } catch (err) {
     console.log(err);
@@ -68,4 +49,35 @@ const deleteReview = async (req, res) => {
   }
 };
 
-module.exports = { createReview, deleteReview };
+const modifyReview = async (req, res) => {
+  if (
+    !req.body.data ||
+    !req.body.data.content ||
+    !req.body.data.rate ||
+    !req.body.data.idUser ||
+    !req.body.data.idReview
+  ) {
+    return res.status(400).json({ errorMessage: 'Bad Request' });
+  }
+  const { content, rate, idUser, idReview } = req.body.data;
+  try {
+    const oldReviewQuery = await reviewServices.getReview(idReview);
+    if (oldReviewQuery.status !== 200) {
+      return res.status(oldReviewQuery.status).json({ errorMessage: 'Bad request' });
+    }
+    const oldReview = oldReviewQuery.data;
+
+    //Check user owner
+    if (oldReview.idUser._id != idUser) {
+      return res.status(403).json({ errorMessage: 'Not authorized' });
+    }
+
+    const result = await updateDBServices.userModifyReview(content, rate, idReview);
+    return res.status(result.status).json(result.data);
+  } catch (err) {
+    console.log(err);
+    return res.status(err.response.status).json({ errorMessage: 'Bad request: ' + err });
+  }
+};
+
+module.exports = { createReview, deleteReview, modifyReview };
