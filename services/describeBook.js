@@ -1,7 +1,8 @@
-const describeBookApiAndBookDB = (bookFromApi, bookFromDB) => {
+const describeBookApiAndBookDB = (bookFromApi, bookFromDB, userReview, otherUsersReview) => {
   return {
     ...bookFromApi,
-    reviews: bookFromDB?.reviews,
+    otherUsersReview,
+    userReview,
     users: bookFromDB?.users,
     _id: bookFromDB?._id,
   };

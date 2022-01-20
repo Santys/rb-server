@@ -1,5 +1,7 @@
 const bookApiServices = require('../services/book.api');
 const bookServices = require('../services/book');
+const reviewServices = require('../services/review');
+
 const { describeBookApiAndBookDB } = require('../services/describeBook');
 
 const searchBooks = async (req, res) => {
@@ -21,8 +23,9 @@ const searchBooks = async (req, res) => {
 
 const searchBookById = async (req, res) => {
   if (!req.params || !req.params.id) return res.status(400).json({ errorMessage: 'Bad Request' });
-
+  if (!req.query || Object.keys(req.query).length === 0) return res.status(400).json({ errorMessage: 'Bad Request' });
   const { id } = req.params;
+  const { idUser } = req.query;
 
   try {
     const resultFromApi = await bookApiServices.searchBookById(id);
@@ -31,8 +34,22 @@ const searchBookById = async (req, res) => {
 
     const resultFromDB = await bookServices.getBookByIdApi(id);
     if (resultFromDB.status !== 200) return res.status(resultFromDB.status).json({ errorMessage: 'Bad DB response' });
+    let userReview = {};
+    let otherUsersReviews = [];
+    if (resultFromDB.data) {
+      const userReviewQuery = await reviewServices.getBookReviewByUserId(resultFromDB.data._id, idUser);
+      if (userReviewQuery.status !== 200)
+        return res.status(userReviewQuery.status).json({ errorMessage: 'Bad DB response' });
 
-    const result = describeBookApiAndBookDB(resultFromApi.data, resultFromDB.data);
+      userReview = userReviewQuery.data;
+
+      const otherUsersReviewsQuery = await reviewServices.getBookReviewsExcludeUserId(resultFromDB.data._id, idUser);
+      if (otherUsersReviewsQuery.status !== 200)
+        return res.status(otherUsersReviewsQuery.status).json({ errorMessage: 'Bad DB response' });
+
+      otherUsersReviews = otherUsersReviewsQuery.data;
+    }
+    const result = describeBookApiAndBookDB(resultFromApi.data, resultFromDB.data, userReview, otherUsersReviews);
     return res.status(200).json(result);
   } catch (err) {
     console.log(err);

@@ -23,6 +23,20 @@ const getReview = async (id) => {
   return { status: 200, data: results };
 };
 
+const getBookReviewByUserId = async (idBook, idUser) => {
+  const result = await Review.find({ idBook, idUser });
+  if (!result[0]) {
+    return { status: 200, data: {} };
+  }
+  return { status: 200, data: result[0] };
+};
+
+const getBookReviewsExcludeUserId = async (idBook, idUser) => {
+  const responseFromDB = await Review.find({ idBook });
+  const results = responseFromDB.filter((review) => review.idUser != idUser);
+  return { status: 200, data: results };
+};
+
 const updateReview = async (id, review) => {
   const updatedReview = await Review.findByIdAndUpdate(id, review, { new: true });
   return { status: 200, data: updatedReview };
@@ -33,4 +47,11 @@ const deleteReview = async (id) => {
   return { status: 200, data: deletedReview };
 };
 
-module.exports = { createReview, getReview, updateReview, deleteReview };
+module.exports = {
+  createReview,
+  getReview,
+  getBookReviewByUserId,
+  getBookReviewsExcludeUserId,
+  updateReview,
+  deleteReview,
+};
