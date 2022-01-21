@@ -3,6 +3,7 @@ const describeBookApiAndBookDB = (bookFromApi, bookFromDB, userReview, otherUser
     ...bookFromApi,
     otherUsersReview,
     userReview,
+    rating: bookFromDB?.rating,
     users: bookFromDB?.users,
     _id: bookFromDB?._id,
   };
