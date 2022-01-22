@@ -16,7 +16,9 @@ const describeBookApi = (book) => {
     authors: book.volumeInfo?.authors,
     description: book.volumeInfo?.description,
     categories: book.volumeInfo?.categories,
-    cover: book.volumeInfo.imageLinks?.thumbnail,
+    cover:
+      book.volumeInfo.imageLinks?.thumbnail ??
+      'https://islandpress.org/sites/default/files/default_book_cover_2015.jpg',
   };
 };
 
